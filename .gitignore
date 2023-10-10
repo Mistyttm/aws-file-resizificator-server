@@ -1,5 +1,7 @@
 *.lockb
 
+build
+
 # Logs
 logs
 *.log
