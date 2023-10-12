@@ -1,33 +1,50 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const testButton = async () => {
+    console.log("Button works!");
+
+    const testMessage = "Test router";
+
+    try {
+      const response = await fetch("/uploadFile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // Fixed the syntax error here
+        body: JSON.stringify(testMessage),
+      });
+
+      if (response.ok) {
+       const data = await response.json();
+       console.log(data);
+      } else {
+          console.log("Error - POST was unsuccessful.");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="mainContainer">
+      <h2>Unnamed: Cloud Project</h2>
+      <h4>Team 1</h4>
+      <button type="button" id="uploadButton" onClick={testButton}>Upload File</button>
+      
+      {/* Todo: change positioning of resolution selection menu */}
+      <select name="resolution" id="res">
+        <option value="1">426x240</option>
+        <option value="2">640x360</option>
+        <option value="3">854x480</option>
+        <option value="4">1280x720</option>
+        <option value="5">1920x1080</option>
+        <option value="6">2560x1440</option>
+        <option value="7">3840x2160</option>
+      </select>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
