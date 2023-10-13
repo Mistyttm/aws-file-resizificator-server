@@ -7,7 +7,8 @@ import morgan from 'morgan';
 
 // CommonJS imports
 //@ts-ignore
-const testRouter = require("./routes/test");
+const testRouter = require("./routes/v1/test");
+const filesRouter = require("./routes/v1/files");
 
 const PORT = process.env.PORT ?? 8080;
 
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 });
 
 app.use('/test', testRouter);
+app.use('/files', filesRouter);
 
 app.listen(PORT, () => {
     console.log("Server running on http://localhost:" + PORT);
