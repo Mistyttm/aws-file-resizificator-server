@@ -1,6 +1,8 @@
 # Ignore lock files
 *.lockb
 
+*.mp4
+
 # Ignore build directories
 /build
 
