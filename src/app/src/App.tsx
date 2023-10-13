@@ -2,7 +2,7 @@ import './App.css'
 
 function App() {
 
-  async function testButton() {
+  const testButton = async () => {
     console.log("Button works!");
 
     const testMessage = "Test router";
@@ -10,13 +10,12 @@ function App() {
     try {
       const response = await fetch("/uploadFile", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: testMessage }),
+        headers: { "Content-Type": "application/json" }, // Fixed the syntax error here
+        body: JSON.stringify(testMessage),
       });
 
       if (response.ok) {
        const data = await response.json();
-       console.log("yay");
        console.log(data);
       } else {
           console.log("Error - POST was unsuccessful.");
@@ -24,7 +23,7 @@ function App() {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
 
   return (
