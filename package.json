@@ -32,6 +32,6 @@
     "compile-front-end": "bun x rimraf ./build/app && (cd ./src/app && bun run build && cp -r ./dist ../../build/app)",
     "compile": "bun x rimraf ./build/server && bun build --target=bun ./src/server/* --outdir build/server/ && bun compile-front-end",
     "start": "bun compile && bun build/server/index.js",
-    "install-all": "cd ./src/app && bun i build && (cd ../.. &&  bun i)"
+    "install-all": "cd ./src/app && bun i && (cd ../.. &&  bun i)"
   }
 }
