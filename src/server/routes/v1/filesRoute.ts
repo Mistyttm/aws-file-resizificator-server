@@ -13,7 +13,7 @@ filesRouter.post("/uploadFile", async (req, res) => {
 
     try {
         // Get the path of the imported file
-        const filePath = path.join(__dirname, '..', '..', 'videos', videoFile.name);
+        const filePath = path.join(__dirname, '..', 'videos', videoFile.name);
 
         // Call the function to store the video
         await getVideo(videoFile, filePath);
