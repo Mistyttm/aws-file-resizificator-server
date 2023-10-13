@@ -5,10 +5,8 @@ import path from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
 
-// CommonJS imports
-//@ts-ignore
-const testRouter = require("./routes/v1/test");
-const filesRouter = require("./routes/v1/files");
+// Routes
+import { routes } from './routes/v1';
 
 const PORT = process.env.PORT ?? 8080;
 
@@ -25,8 +23,7 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "..", "build", "app", "index.html"));
 });
 
-app.use('/test', testRouter);
-app.use('/files', filesRouter);
+app.use('/api/v1/files', routes);
 
 app.listen(PORT, () => {
     console.log("Server running on http://localhost:" + PORT);
