@@ -8,7 +8,7 @@ function App() {
     const testMessage = "Test router";
 
     try {
-      const response = await fetch("/test/uploadFile", {
+      const response = await fetch("/uploadFile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: testMessage }),
