@@ -30,15 +30,15 @@ function App() {
       }
     }
   }
+
   return (
     <>
       <div className="mainContainer">
         <h2>Unnamed: Cloud Project</h2>
         <h4>Team 1</h4>
-        
-        <form method="POST" action="/import" encType="multipart/form-data">
-          <input type="file" id="fileInput" />
-        </form>
+
+        <input type="file" id="fileInput" />
+
         
         <button type="button" onClick={uploadVideo}>Upload File</button>
         
