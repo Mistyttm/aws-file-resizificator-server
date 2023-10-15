@@ -1,6 +1,14 @@
 import './App.css'
+import { SetStateAction, useState } from 'react';
 
 function App() {
+  // Set resolution to the option selected from the menu
+  const [value, setValue] = useState('resolution');
+
+  const selectResolution = (event: { target: { value: SetStateAction<string>; }; }) => {
+    setValue(event.target.value);
+    console.log(event.target.value);
+  };
 
   async function uploadVideo() {
     // Get video file input from user
@@ -14,7 +22,6 @@ function App() {
       const formData = new FormData();
       formData.append('video', video);
 
-      //src/server/routes/v1/filesRoute.ts
       try {
         // POST form data object containing the video file
         const response = await fetch('/api/v1/files/uploadFile', {
@@ -36,21 +43,19 @@ function App() {
       <div className="mainContainer">
         <h2>Unnamed: Cloud Project</h2>
         <h4>Team 1</h4>
-
         <input type="file" id="fileInput" />
-
-        
         <button type="button" onClick={uploadVideo}>Upload File</button>
-        
-        <select name="resolution" id="res">
-          <option value="1">426x240</option>
-          <option value="2">640x360</option>
-          <option value="3">854x480</option>
-          <option value="4">1280x720</option>
-          <option value="5">1920x1080</option>
-          <option value="6">2560x1440</option>
-          <option value="7">3840x2160</option>
+
+        <select name="resolution" id="res" value={value} onChange={selectResolution}>
+          <option value="426x240">426x240</option>
+          <option value="640x360">640x360</option>
+          <option value="854x480">854x480</option>
+          <option value="1280x720">1280x720</option>
+          <option value="1920x1080">1920x1080</option>
+          <option value="2560x1440">2560x1440</option>
+          <option value="3840x2160">3840x2160</option>
         </select>
+
       </div>
     </>
   );

@@ -4,7 +4,6 @@ import upload from "../../middleware/multer"
 export const filesRouter = Router();
 
 /* Upload video file from client */
-// These req and res types are what vs code added in for now to make typescript stop complaining about implicit types
 filesRouter.post("/uploadFile", upload.single("video"), (req, res) => {
     try {        
         console.log(req.file);
