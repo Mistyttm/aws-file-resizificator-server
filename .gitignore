@@ -1,6 +1,8 @@
 # Ignore lock files
 *.lockb
 
+client_secret.json
+
 *.mp4
 
 # Ignore build directories
