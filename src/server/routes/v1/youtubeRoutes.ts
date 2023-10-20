@@ -18,6 +18,7 @@ youtubeRouter.post("/upload", (req, res) => {
         res.json({status: "Fail", message: "No thumbnail specified"});
     }
     
+    // Credentials to pass through to youtube
     const credentials = { email: email?.toString(), pass: pass?.toString(), recoveryemail: recoveryEmail?.toString() }
 
     const video1 = { path: 'src/server/videos/' + video, title: video, description: video, thumbnail: 'src/server/pictures/' + thumbnail}
