@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "..", "build", "app", "index.html"));
 });
 
-app.use('/api/v1/files', routes);
+app.use('/api/v1', routes);
 
 app.listen(PORT, () => {
     console.log("Server running on http://localhost:" + PORT);
