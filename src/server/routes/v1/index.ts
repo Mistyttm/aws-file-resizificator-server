@@ -1,6 +1,8 @@
 import express from 'express';
 import { filesRouter } from './filesRoute';
+import { youtubeRouter } from './youtube';
 
 export const routes = express.Router();
 
-routes.use(filesRouter);
+routes.use("/files", filesRouter);
+routes.use("/youtube", youtubeRouter);
