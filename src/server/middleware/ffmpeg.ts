@@ -1,15 +1,6 @@
 import Ffmpeg from "fluent-ffmpeg";
-import ffmpegPath from "ffmpeg-static";
 import fs from 'fs';
 import path from "path";
-
-if (ffmpegPath === null){
-    throw new Error("FFMPEG not found. Please install the latest version of FFMPEG");
-} else {
-    // TODO: ensure that this is fixed for docker
-    Ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
-}
-
 
 export default async function encodeVideo(videoFile: any, resolution: string) {
     let message = '';
@@ -17,22 +8,18 @@ export default async function encodeVideo(videoFile: any, resolution: string) {
         const absolutePath = path.resolve("src/server/videos/" + videoFile);
         const filePath = fs.createReadStream(absolutePath);
         const newFile = "src/server/videos/" + Date.now() + "_" + resolution + "_" + videoFile
-        await new Promise((resolve, reject) => {
-            Ffmpeg()
+        Ffmpeg()
                 .input(filePath)
                 .videoCodec("libx264")
                 .size(resolution)
                 .output(newFile)
                 .on("end", (video) => {
-                    message = newFile;
-                    resolve(video);
+                    message = video;
                 })
                 .on("error", (error) => {
                     message = "Error encoding video: " + error;
-                    reject(error);
                 })
                 .run();
-        });
         return message;
 
     } catch (error) {
