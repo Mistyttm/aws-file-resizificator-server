@@ -1,3 +1,4 @@
+
 export default async function getVideo(videoFile: any, filePath: string) {
     console.log(videoFile);
     videoFile.mv(filePath, function (error: any) {
@@ -5,7 +6,7 @@ export default async function getVideo(videoFile: any, filePath: string) {
             console.log(error);
         } else {
             console.log("Video imported");
-          //todo: need to add a handler to validate the file is a video type
+            //todo: need to add a handler to validate the file is a video type
         }
     });
 }
