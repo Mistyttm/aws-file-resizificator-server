@@ -1,27 +1,29 @@
 import Ffmpeg from "fluent-ffmpeg";
 import ffmpegPath from "ffmpeg-static";
 import fs from 'fs';
+import path from "path";
 
 if (ffmpegPath === null){
     throw new Error("FFMPEG not found. Please install the latest version of FFMPEG");
 } else {
-    Ffmpeg.setFfmpegPath(ffmpegPath);
+    Ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
 }
 
 
-async function encodeVideo(videoFile: any, resolution: string) {
+export default async function encodeVideo(videoFile: any, resolution: string) {
     let message = '';
     try {
-        const filePath = fs.createReadStream(videoFile.path);
-
+        const absolutePath = path.resolve("src/server/videos/" + videoFile);
+        const filePath = fs.createReadStream(absolutePath);
+        const newFile = "src/server/videos/" + Date.now() + "_" + resolution + "_" + videoFile
         await new Promise((resolve, reject) => {
             Ffmpeg()
                 .input(filePath)
                 .videoCodec("libx264")
                 .size(resolution)
-                .output("test.mp4")
+                .output(newFile)
                 .on("end", (video) => {
-                    message = "Video encoding complete";
+                    message = newFile;
                     resolve(video);
                 })
                 .on("error", (error) => {
@@ -37,7 +39,7 @@ async function encodeVideo(videoFile: any, resolution: string) {
     }
 }
 
-async function getThumbnail(videoFile: any) {
+export async function getThumbnail(videoFile: any) {
     let message = '';
 
     try {
