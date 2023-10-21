@@ -24,4 +24,4 @@ const isVideo = function (req: any, file: Express.Multer.File, cb: any) {
 
 const upload = multer({storage: storage, fileFilter: isVideo});
 
-export default [upload, isVideo];
+export default upload;
