@@ -17,7 +17,7 @@ youtubeRouter.post("/upload", (req, res) => {
     if (thumbnail === undefined){
         res.json({status: "Fail", message: "No thumbnail specified"});
     }
-    
+
     // Credentials to pass through to youtube
     const credentials = { email: email?.toString(), pass: pass?.toString(), recoveryemail: recoveryEmail?.toString() }
 
@@ -26,12 +26,7 @@ youtubeRouter.post("/upload", (req, res) => {
     const onVideoUploadSuccess = (videoUrl: string) => {
         res.json({status: "OK", message: "video uploaded successfully", URL: videoUrl});
     }
-    
-    try {
-        // TODO: update executable path to be suitable for docker when deploying
-        // @ts-ignore
-        await upload (credentials, [video1], {executablePath: '/usr/bin/google-chrome-stable'}).then(onVideoUploadSuccess)
-    } catch (error) {
-        res.status(500).json({status: "error", message: error});
-    }
+    console.log("uploading to youtube");
+    // @ts-ignore
+    upload (credentials, [video1], {executablePath: '/usr/bin/google-chrome-stable'}).then(onVideoUploadSuccess)
 })
