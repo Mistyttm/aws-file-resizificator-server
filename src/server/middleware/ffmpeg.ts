@@ -6,6 +6,7 @@ import path from "path";
 if (ffmpegPath === null){
     throw new Error("FFMPEG not found. Please install the latest version of FFMPEG");
 } else {
+    // TODO: ensure that this is fixed for docker
     Ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
 }
 
