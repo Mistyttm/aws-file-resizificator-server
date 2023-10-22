@@ -5,9 +5,10 @@ client_secret.json
 
 /yt-auth
 
-/src/server/videos
-/src/server/pictures
-!/src/server/pictures/.gitkeep
+/src/videos
+/src/pictures
+!/src/pictures/.gitkeep
+!/src/videos/.gitkeep
 
 # Ignore build directories
 /build
