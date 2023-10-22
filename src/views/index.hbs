@@ -1,0 +1,42 @@
+<div id="header">    
+    <h1>{{ title }}</h1> 
+            {{#if displayMessage }}
+         <div id="message">
+             <h3> {{ displayMessage }} </h3>
+              {{/if}}
+        </div>
+</div>
+
+<div id="main-content">
+    <h3>Step 1: Select a video</h3>
+    <div id="import-file-container">
+       
+     <p></p>
+         <form method="POST" action="/import" enctype="multipart/form-data">
+        <input type="file" name="video" id="import-file"/>
+         </div>
+     <p></p> 
+         <h3>Step 2: Choose encoding resolution</h3>
+     <div id="options-container">
+        <select name="resolution" id="res">
+            <option value="None" selected="selected">Resolution</option>
+            <option value="426x240">426x240</option>
+            <option value="640x360">640x360</option>
+            <option value="854x480">854x480</option>
+            <option value="1280x720">1280x720</option>
+            <option value="1920x1080">1920x1080</option>
+            <option value="2560x1440">2560x1440</option>
+            <option value="3840x2160">3840x2160</option>
+        </select>
+    </div>
+    <p></p>  
+    <center> <input type="submit" id="selectRes" value="Encode Video" /> </center> 
+        
+    </form>
+
+    {{#if thumbnailImage}}
+         <img src= {{ thumbnailImage }} alt="Thumbnail" />
+    {{/if}}
+
+    <script src="/javascripts/upload.js"></script>
+ </div>

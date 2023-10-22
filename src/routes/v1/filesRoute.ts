@@ -5,6 +5,11 @@ import encodeVideo from '../../middleware/ffmpeg';
 
 export const filesRouter = Router();
 
+/* GET home page. */
+filesRouter.get('/', function(req, res, next) {
+    res.render('index', { title: 'CAB432' });
+});
+  
 /* Upload video file from client */
 filesRouter.post("/uploadFile", upload.single("video"), (req, res) => {
     try {        
