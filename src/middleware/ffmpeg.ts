@@ -5,9 +5,9 @@ import path from "path";
 export default async function encodeVideo(videoFile: any, resolution: string) {
     let message = '';
     try {
-        const absolutePath = path.resolve("src/server/videos/" + videoFile);
+        const absolutePath = path.resolve("src/videos/" + videoFile);
         const filePath = fs.createReadStream(absolutePath);
-        const newFile = "src/server/videos/" + Date.now() + "_" + resolution + "_" + videoFile
+        const newFile = "src/videos/" + Date.now() + "_" + resolution + "_" + videoFile
         Ffmpeg()
                 .input(filePath)
                 .videoCodec("libx264")

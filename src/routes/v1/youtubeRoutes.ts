@@ -21,7 +21,7 @@ youtubeRouter.post("/upload", (req, res) => {
     // Credentials to pass through to youtube
     const credentials = { email: email?.toString(), pass: pass?.toString(), recoveryemail: recoveryEmail?.toString() }
 
-    const video1 = { path: 'src/server/videos/' + video, title: video, description: video, thumbnail: 'src/server/pictures/' + thumbnail}
+    const video1 = { path: 'src/videos/' + video, title: video, description: video, thumbnail: 'src/pictures/' + thumbnail}
 
     const onVideoUploadSuccess = (videoUrl: string) => {
         res.json({status: "OK", message: "video uploaded successfully", URL: videoUrl});
