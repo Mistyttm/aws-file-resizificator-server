@@ -36,10 +36,8 @@
     "typescript": "^5.2.2"
   },
   "scripts": {
-    "dev": "bun run compile-front-end && bun --hot run src/server/index.ts",
-    "compile-front-end": "bun x rimraf ./build/app && (cd ./src/app && bun run build && cp -r ./dist ../../build/app)",
-    "compile": "bun x rimraf ./build/server && bun build --target=bun ./src/server/* --outdir build/server/ && bun compile-front-end",
-    "start": "bun compile && bun build/server/index.js",
-    "install-all": "cd ./src/app && bun i && (cd ../.. &&  bun i)"
+    "dev": "bun --hot run src/index.ts",
+    "compile": "bun x rimraf ./build && bun build --target=bun ./src/* --outdir build/",
+    "start": "bun compile && bun build/server/index.js"
   }
 }
