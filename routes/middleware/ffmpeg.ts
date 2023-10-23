@@ -3,8 +3,6 @@ const ffmpegPath = require('ffmpeg-static');
 const fs = require('fs');
 const path = require("path");
 
-// Set path to ffmpeg
-//ffmpeg.setFfmpegPath(ffmpegPath);
 
 async function encodeVideo(videoFile: any, resolution: any) {
     let status;
@@ -52,7 +50,7 @@ async function getThumbnail(videoFile: any) {
             .run();
 
         return status;
-        
+
         } catch (error) {
             console.error("Error creating thumbnail ", error);
         }

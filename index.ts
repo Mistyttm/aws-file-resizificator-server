@@ -8,6 +8,8 @@ const logger = require('morgan');
 const hbs = require('hbs');
 const indexRouter = require('./routes/index');
 const app = express();
+const { createS3bucket, uploadJsonToS3, getObjectFromS3 } = require("./routes/middleware/s3Bucket");
+const { createSQSQueue } = require("./routes/middleware/sqs");
 
 const PORT = process.env.PORT ?? 8080;
 
@@ -26,5 +28,14 @@ app.use('/', indexRouter);
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+/*Create s3 bucket and sqs queue (if not already created) 
+upload bucket data and retrieve the bucket object */
+(async () => {
+  await createS3bucket();
+  await uploadJsonToS3();
+  await getObjectFromS3();
+  await createSQSQueue();
+})();
 
 module.exports = app;
