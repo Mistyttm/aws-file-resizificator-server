@@ -25,7 +25,8 @@ async function encodeVideo(videoFile: any, resolution: any) {
             })
             .run();
 
-            return status;
+        return status;
+
     } catch (error) {
         console.error("Error encoding video ", error);
     }
@@ -51,6 +52,7 @@ async function getThumbnail(videoFile: any) {
             .run();
 
         return status;
+        
         } catch (error) {
             console.error("Error creating thumbnail ", error);
         }
