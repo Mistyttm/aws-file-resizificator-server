@@ -1,21 +1,27 @@
 <!-- Header -->
 <div id="header">    
     <h1>{{ title }}</h1> 
-            {{#if displayMessage }}
-         <div id="message">
-             <h3> {{ displayMessage }} </h3>
-              {{/if}}
-        </div>
 </div>
 
     <!-- Main Content -->
     <div id="main-content">
         <h3>Step 1: Select a video</h3>
-        <div id="import-file-container">  
+        {{#if displayMessage }}
+        <div id="message">
+            <p> {{ displayMessage }} </p>
+        </div>
+        {{ else }}
+            <p> File must be a video with extension type .mp4, .mov, .avi or .mkv.</p>
+        {{/if}}
 
         <!-- Upload file -->
+    <div id="import-file-container">  
         <form method="POST" action="/uploadFile" enctype="multipart/form-data">
         <input type="file" name="video" id="upload-file"/>
+       
+        <!-- Submit file for upload -->
+        <input type="submit" id="selectRes" value="Upload Video" />     
+    </form>
     </div>
 
     <!-- Choose resolution from options menu -->
@@ -34,10 +40,6 @@
         </select>
     </div>
     <p></p>
-
-    <!-- Submit file for upload -->
-    <center><input type="submit" id="selectRes" value="Upload Video" /></center>     
-    </form>
 
     <script src="/typescripts/upload.js"></script>
  </div>
