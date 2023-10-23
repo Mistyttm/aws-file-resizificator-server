@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { pathToFileURL } = require("bun");
+const path = require("path");
 const fs = require('fs');
-const ffmpeg = require('fluent-ffmpeg');
 const { upload } = require("./middleware/multer");
 const { encodeVideo, getThumbnail } = require("./middleware/ffmpeg");
 
@@ -11,43 +10,34 @@ router.get('/', function(req: any, res: any) {
     res.render('index', { title: 'Video Resizer' });
 });
 
-/* Upload video file */
-router.post("/uploadFile", upload.single("video"), (req: any, res: any ) => {
-    try {
-        if (req.file) {
-            console.log(req.file);
-            res.json({status: "OK", message: "File uploaded successfully"});
-          }        
+/* Upload video */
+router.post("/uploadFile", upload.single("video"), async (req: any, res: any) => {
+    try {        
+        if (!req.file) {
           res.render("index", { displayMessage: "Please select a video file to upload.", title: 'Video Resizer' });
+        }
+        const video = req.file;
+        const resolution = req.body.resolution;
+
+        const fileExtension = path.extname(req.file.originalname).toLowerCase();
+        const validExtensions = ['.mp4', '.mov', '.avi', '.mkv'];
+        
+        if (!validExtensions.includes(fileExtension)) {
+          res.render("index", { displayMessage: "File must be of extension type: '.mp4', '.mov', '.avi' or '.mkv'.", title: 'Video Resizer' });
+        }
+  
+        if (resolution != "None") {
+          const encode = await encodeVideo(video, resolution);
+          const thumbnail = await getThumbnail(video);
+  
+          res.render("index", { displayMessage: "Success!", title: 'Video Resizer' });
+        } else {
+          res.render("index", { displayMessage: "Please select a resolution.", title: 'Video Resizer' });
+        }
     } catch (error) {
-        console.log("Error - unable to import video ", error);
-        res.status(500).json({ status: "Error", message: "Unable to import video" });
+        let displayMessage = error;
+        res.render("index", { displayMessage, title: 'Video Resizer' });
     }
 });
-
-/* Encode uploaded video to selected resolution */
-router.post("/tempRes", async (req: { body: { video: { toString: () => string; }; resolution: any; }; }, res: { json: (arg0: { status: string; message: string; file?: string | undefined; }) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { status: string; message: unknown; }): void; new(): any; }; }; }) => {
-    if (!req.body.video){
-        res.json({status: "error", message: "You have not provided a video file"});
-    }
-    if(!pathToFileURL("../../videos/" + req.body.video.toString())){
-        res.status(500).json({status: "error", message: "File does not exist"});
-    }
-    if (!req.body.resolution){
-        res.status(500).json({status: "error", message: "You have not provided adequate resolutions"});
-    }
-
-    const video = req.body.video;
-    const resolution = req.body.resolution;
-
-    try {
-        await encodeVideo(video, resolution).then((response: any) => {
-            res.json({status: "OK", message: "Encoding complete", file: response});
-        });
-    }
-    catch (error) {
-        res.status(500).json({status: "error", message: error})
-    }
-})
 
 module.exports = router;

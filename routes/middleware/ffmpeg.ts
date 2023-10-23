@@ -1,69 +1,59 @@
-const Ffmpeg = require("fluent-ffmpeg");
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
 const fs = require('fs');
 const path = require("path");
 
-/* Encode video resolution */
-export default async function encodeVideo(videoFile: any, resolution: string) {
-    let message = '';
+// Set path to ffmpeg
+//ffmpeg.setFfmpegPath(ffmpegPath);
 
+async function encodeVideo(videoFile: any, resolution: any) {
+    let status;
     try {
-        // Set file paths
-        const absolutePath = path.resolve("src/videos/" + videoFile);
-        const filePath = fs.createReadStream(absolutePath);
-        const newFile = "src/videos/" + Date.now() + "_" + resolution + "_" + videoFile;
-        
-        // Encode video
-        Ffmpeg()
+        const filePath = fs.createReadStream(videoFile.path);
+        ffmpeg()
             .input(filePath)
             .videoCodec("libx264")
             .size(resolution)
-            .output(newFile)
-            .on("end", (video: any) => {
-                // Send encoded video as message to server
-                message = video;
+            .output("test.mp4")
+            .on("end", () => {
+                status = "OK";
+                console.log("Success - Video encoding complete.");
             })
             .on("error", (error: any) => {
-                message = "Error encoding video: " + error;
+                status = "ERROR";
+                console.log(error);
             })
             .run();
 
-        return message;
+            return status;
     } catch (error) {
-        console.error("Error encoding video: ", error);
+        console.error("Error encoding video ", error);
     }
 }
 
-/* Create video thumbnails */
-export async function getThumbnail(videoFile: any) {
-    let message = '';
-
+async function getThumbnail(videoFile: any) {
+    let status;
     try {
-        // Set file paths
-        const absolutePath = path.resolve("src/videos/" + videoFile);
-        const filePath = fs.createReadStream(absolutePath);
-        const outputFile = "src/thumbnails/" + Date.now() + "_" + "thumbnail" + "_" + videoFile;
+        const filePath = fs.createReadStream(videoFile.path);
+        ffmpeg()
+            .input(filePath)
+            .seekInput("5")
+            .frames(1) 
+            .output("thumbnail.png")
+            .on("end", () => {
+                status = "OK";
+                console.log("Success - Thumbnail created.");
+            })
+            .on("error", (error: any) => {
+                status = "ERROR";
+                console.error("Error - could not create thumbnail ", error);
+            })
+            .run();
 
-        // Create thumbnail images from video screenshots
-        await new Promise((resolve, reject) => {
-            Ffmpeg()
-                .takeScreenshots({
-                    count: 1, // Take 1 screenshot
-                    timemarks: ['10'], // 10 seconds into video
-                })
-                .output(outputFile)
-                .on("end", (video: any) => {
-                    message = "Thumbnail successfully created.";
-                    resolve(video);
-                })
-                .on("error", (error: any) => {
-                    message = "Error creating thumbnail: " + error;
-                    reject(error);
-                })
-                .run();
-        });
-        return message;
-
-    } catch (error) {
-        console.error("Error creating thumbnail: ", error);
+        return status;
+        } catch (error) {
+            console.error("Error creating thumbnail ", error);
+        }
     }
-}
+
+module.exports = { encodeVideo, getThumbnail };

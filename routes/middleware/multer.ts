@@ -15,16 +15,14 @@ const storage = multer.diskStorage({
 
 /* Check file has valid video extension type */ 
 const isVideo = function (req: any, file: any, cb: any) {
-    // Define valid extensions types
     const validExtensions = ['.mp4', '.mov', '.avi', '.mkv'];
     const fileExtension = path.extname(file.originalname).toLowerCase();
 
-    // Check if uploaded file path includes valid extension type
     if (validExtensions.includes(fileExtension)) {
         cb(null, true);
-    } else {
-        // Invalid type
-        cb(null, false);
+    } else { 
+        // If file extension invalid
+        cb(false);
     }
 }; 
 

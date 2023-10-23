@@ -19,14 +19,11 @@
         <form method="POST" action="/uploadFile" enctype="multipart/form-data">
         <input type="file" name="video" id="upload-file"/>
        
-        <!-- Submit file for upload -->
-        <input type="submit" id="selectRes" value="Upload Video" />     
-    </form>
     </div>
 
     <!-- Choose resolution from options menu -->
     <p></p> 
-    <h3>Step 2: Choose encoding resolution</h3>
+    <h3>Step 2: Choose resolution to encode</h3>
      <div id="options-container">
         <select name="resolution" id="res">
             <option value="None" selected="selected">Resolution</option>
@@ -38,6 +35,13 @@
             <option value="2560x1440">2560x1440</option>
             <option value="3840x2160">3840x2160</option>
         </select>
+
+                <!-- Submit file for upload -->
+        <input type="submit" value="Upload Video" />     
+        </form>
+   
+    </div>
+
     </div>
     <p></p>
 

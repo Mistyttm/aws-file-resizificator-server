@@ -1,4 +1,3 @@
-// Todo: Change to typescript
 document.getElementById("res").addEventListener("click", async function() {
     const resolutionSelect = document.getElementById("res");
     const selectedResolution = resolutionSelect.value;
@@ -14,7 +13,7 @@ document.getElementById("res").addEventListener("click", async function() {
         });
 
         if (response.ok) {
-            console.log("Resolution choice sent successfully.");
+            console.log(selectedResolution);
         } else {
             console.log("Error - POST was unsuccessful.");
         }
@@ -22,4 +21,3 @@ document.getElementById("res").addEventListener("click", async function() {
         console.log("Error - could not retrieve video resolution choice.");
     }
 });
-

@@ -1,4 +1,6 @@
 const express = require('express');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
 const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
