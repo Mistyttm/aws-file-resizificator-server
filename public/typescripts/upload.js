@@ -5,7 +5,7 @@ document.getElementById("res").addEventListener("click", async function() {
 
     if (selectedResolution) {
         // POST selected resolution to the server
-        const response = await fetch("/import", {
+        const response = await fetch("/uploadFile", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
