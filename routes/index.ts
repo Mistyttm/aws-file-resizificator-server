@@ -7,15 +7,18 @@ const { upload } = require("./middleware/multer");
 const { encodeVideo, getThumbnail } = require("./middleware/ffmpeg");
 
 /* GET home page. */
-router.get('/', function(req: any, res: { render: (arg0: string, arg1: { title: string; }) => void; }, next: any) {
+router.get('/', function(req: any, res: any) {
     res.render('index', { title: 'Video Resizer' });
 });
 
 /* Upload video file */
-router.post("/uploadFile", upload.single("video"), (req: { file: any; }, res: { json: (arg0: { status: string; message: string; }) => void; status: (arg0: number) => { (): any; new(): any; json: { (arg0: { status: string; message: string; }): void; new(): any; }; }; }) => {
-    try {        
-        console.log(req.file);
-        res.json({status: "OK", message: "File uploaded successfully"});
+router.post("/uploadFile", upload.single("video"), (req: any, res: any ) => {
+    try {
+        if (req.file) {
+            console.log(req.file);
+            res.json({status: "OK", message: "File uploaded successfully"});
+          }        
+          res.render("index", { displayMessage: "Please select a video file to upload.", title: 'Video Resizer' });
     } catch (error) {
         console.log("Error - unable to import video ", error);
         res.status(500).json({ status: "Error", message: "Unable to import video" });
