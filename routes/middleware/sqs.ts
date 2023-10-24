@@ -14,7 +14,7 @@ const params = {
   QueueName: "cab432_team1_sqs",
   Attributes: {
     "DelaySeconds": "30",
-    "MessageRetentionPeriod": "86400"
+    "MessageRetentionPeriod": "900" // 15 minutes
   }
 };
 
