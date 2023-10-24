@@ -1,6 +1,4 @@
 const express = require('express');
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegPath = require('ffmpeg-static');
 const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -10,6 +8,11 @@ const indexRouter = require('./routes/index');
 const app = express();
 const { createS3bucket, uploadJsonToS3, getObjectFromS3 } = require("./routes/middleware/s3Bucket");
 const { createSQSQueue } = require("./routes/middleware/sqs");
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
+
+// Initialise path for ffmpeg on start up
+ffmpeg.setFfmpegPath('ffmpeg');
 
 const PORT = process.env.PORT ?? 8080;
 

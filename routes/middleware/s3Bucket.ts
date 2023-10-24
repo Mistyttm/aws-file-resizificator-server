@@ -1,4 +1,6 @@
 const AWS = require("aws-sdk");
+const fs = require('fs');
+const path = require("path");
 
 // Code sourced from week 7 s3 demonstration 
 AWS.config.update({
@@ -16,6 +18,7 @@ const objectKey = "data.json";
 
 // JSON data to be written to S3
 let bucketData = {
+  video: null,
   thumbnail: null
 };
 
@@ -49,6 +52,26 @@ async function uploadJsonToS3() {
   }
 }
 
+// Note: Include .mp4 extension in videoName param
+async function uploadVideoToS3(filePath: any, videoName: any) {
+    const file = fs.createReadStream(filePath);
+    const params = {
+      Bucket: bucketName,
+      Key: videoName,
+      Body: file,
+      ContentType: 'video/mp4'
+    };
+  
+    try {
+      await s3.upload(params).promise();
+      console.log("Video uploaded to S3 successfully.");
+      bucketData.video = videoName;
+      await uploadJsonToS3();
+    } catch (error) {
+      console.error("Error uploading video to S3: ", error);
+    }
+  }
+
 // Retrieve the object from S3
 async function getObjectFromS3() {
   const params = {
@@ -68,4 +91,4 @@ async function getObjectFromS3() {
   }
 }
 
-module.exports = { bucketData, createS3bucket, uploadJsonToS3, getObjectFromS3 };
+module.exports = { bucketData, createS3bucket, uploadJsonToS3, getObjectFromS3, uploadVideoToS3};

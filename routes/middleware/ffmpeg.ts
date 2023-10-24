@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require("path");
 
 
-async function encodeVideo(videoFile: any, resolution: any) {
+async function encodeVideo(videoFile: any, resolution: any, outputName: any) {
     let status;
     try {
         const filePath = fs.createReadStream(videoFile.path);
@@ -12,7 +12,7 @@ async function encodeVideo(videoFile: any, resolution: any) {
             .input(filePath)
             .videoCodec("libx264")
             .size(resolution)
-            .output("test.mp4")
+            .output(outputName)
             .on("end", () => {
                 status = "OK";
                 console.log("Success - Video encoding complete.");

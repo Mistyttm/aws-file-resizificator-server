@@ -4,6 +4,8 @@ const path = require("path");
 const fs = require('fs');
 const { upload } = require("./middleware/multer");
 const { encodeVideo, getThumbnail } = require("./middleware/ffmpeg");
+let runCount = 0;
+
 
 /* GET home page. */
 router.get('/', function(req: any, res: any) {
@@ -16,6 +18,9 @@ router.post("/uploadFile", upload.single("video"), async (req: any, res: any) =>
         if (!req.file) {
           res.render("index", { displayMessage: "Please select a video file to upload.", title: "Video Resizer" });
         }
+        runCount++;
+        console.log("Run count: ", runCount);
+
         const video = req.file;
         const resolution = req.body.resolution;
 
@@ -25,9 +30,11 @@ router.post("/uploadFile", upload.single("video"), async (req: any, res: any) =>
         if (!validExtensions.includes(fileExtension)) {
           res.render("index", { displayMessage: "File must be of extension type: '.mp4', '.mov', '.avi' or '.mkv'.", title: "Video Resizer" });
         }
-  
+        
+        console.log("Resolution: ",resolution);
         if (resolution != "None") {
-          const encode = await encodeVideo(video, resolution);
+          const outputName = "new" + "_" + runCount + "_" + video.originalname;
+          const encode = await encodeVideo(video, resolution, outputName);
           if (encode == "OK") {
             await getThumbnail(video);
             res.render("index", { displayMessage: "Success! Video was encoded.", title: "Video Resizer" });
