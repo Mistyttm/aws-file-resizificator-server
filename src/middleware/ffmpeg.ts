@@ -2,25 +2,26 @@ import Ffmpeg from "fluent-ffmpeg";
 import fs from 'fs';
 import path from "path";
 
-export default async function encodeVideo(videoFile: any, resolution: string) {
-    let message = '';
+export async function encodeVideo(videoFile: any, resolution: string, outputName: string) {
     try {
+        let status = '';
         const absolutePath = path.resolve("src/videos/" + videoFile);
         const filePath = fs.createReadStream(absolutePath);
-        const newFile = "src/videos/" + Date.now() + "_" + resolution + "_" + videoFile
         Ffmpeg()
                 .input(filePath)
                 .videoCodec("libx264")
                 .size(resolution)
-                .output(newFile)
-                .on("end", (video) => {
-                    message = video;
+                .output("src/videos/" + outputName)
+                .on("end", () => {
+                    status = "OK";
+                    console.log("Success - Video encoding complete.");
                 })
                 .on("error", (error) => {
-                    message = "Error encoding video: " + error;
+                    status = "ERROR";
+                    console.log(error);
                 })
                 .run();
-        return message;
+        return status;
 
     } catch (error) {
         console.error("Error encoding video ", error);
@@ -28,28 +29,26 @@ export default async function encodeVideo(videoFile: any, resolution: string) {
 }
 
 export async function getThumbnail(videoFile: any) {
-    let message = '';
-
     try {
+        let status = '';
         const filePath = fs.createReadStream(videoFile.path);
-        
         await new Promise((resolve, reject) => {
             Ffmpeg()
                 .input(filePath)
                 .seekInput("5")
                 .frames(1) 
                 .output("thumbnail.png")
-                .on("end", (video) => {
-                    message = "Thumbnail successfully created.";
-                    resolve(video);
+                .on("end", () => {
+                    status = "OK";
+                    console.log("Success - Thumbnail created.");
                 })
                 .on("error", (error) => {
-                    message = "Error creating thumbnail: " + error;
-                    reject(error);
+                    status = "ERROR";
+                    console.error("Error - could not create thumbnail ", error);
                 })
                 .run();
         });
-        return message;
+        return status;
 
     } catch (error) {
         console.error("Error creating thumbnail: ", error);
