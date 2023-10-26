@@ -4,7 +4,6 @@ const app = express();
 import path from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
-import 'hbs';
 
 // middleware imports
 import { createS3bucket, uploadJsonToS3, getObjectFromS3 } from './middleware/aws';
@@ -24,14 +23,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan("combined"));
-
-// Setup Handlebars as view engine
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
-
-app.use('/', function(req, res) {
-    res.render("index", { title: "Video Resizer" });
-});
 
 app.use('/api/v1', routes);
 
