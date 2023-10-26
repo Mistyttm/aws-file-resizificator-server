@@ -50,9 +50,9 @@ filesRouter.post("/upload", upload.single("video"), async (req, res) => {
             console.error(error);
             // Handle the error as needed
         }
-        
-        res.render("index", { fileName, displayMessage: "Done.", title: 'Video Resizer' });
+        res.json({status: "OK", file: fileName, message: "Video successfully resized"});
     } catch (error) {
         console.error(error);
+        res.status(500).json({status: "error", message: error})
     }
 });
