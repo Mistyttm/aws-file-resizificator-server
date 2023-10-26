@@ -1,46 +1,58 @@
 import { Router } from "express";
-import upload from "../../middleware/multer"
-import { pathToFileURL } from "bun";
-import { encodeVideo, getThumbnail } from '../../middleware/ffmpeg';
-import path from 'path';
+import * as AWS from 'aws-sdk';
+import upload from "../../middleware/multer";
+import { randomBytes } from "crypto";
+import { encodeVideo } from '../../middleware/ffmpeg';
+import { uploadToS3, createS3bucket } from "../../middleware/aws";
 
 export const filesRouter = Router();
+const bucketName = process.env.BUCKET_NAME
+const s3Bucket = new AWS.S3();
 
-let runCount = 0;
+(async () => {
+    await createS3bucket();
+})();  
 
-/* Upload video file from client */
-filesRouter.post("/uploadFile", upload.single("video"), async (req, res) => {
-    try {        
-        if (!req.file) {
-            res.render("index", { displayMessage: "Please select a video file to upload.", title: "Video Resizer" });
-        }
-        runCount++;
-        console.log("Run count: ", runCount);
-
-        const video = req.file;
+/* Upload client video */
+filesRouter.post("/upload", upload.single("video"), async (req, res) => {
+    try {
         const resolution = req.body.resolution;
-
-        const fileExtension = (req.file?.originalname ? path.extname(req.file.originalname).toLowerCase() : '');
-        const validExtensions = ['.mp4', '.mov', '.avi', '.mkv'];
-        
-        if (!validExtensions.includes(fileExtension)) {
-            res.render("index", { displayMessage: "File must be of extension type: '.mp4', '.mov', '.avi' or '.mkv'.", title: "Video Resizer" });
+        // Generate random file name
+        const fileName = randomBytes(64).toString("hex");
+    
+        // Upload the original video to s3 bucket
+        const command = await uploadToS3(fileName, req.file?.buffer, req.file?.mimetype);
+        const outputName = "encoded_" + "resolution" + fileName;
+    
+        try {
+            // Get the signed URL of the file uploaded to S3
+            const signedUrl = await new Promise<string>((resolve, reject) => {
+                s3Bucket.getSignedUrl(
+                    "getObject",
+                    {
+                        Bucket: bucketName,
+                        Key: fileName,
+                        Expires: 60 * 5,
+                        ResponseContentType: req.file?.mimetype,
+                    },
+                    (error, url) => {
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve(url);
+                        }
+                    }
+                );
+            });
+            // Encode the video from the signed URL to the client's selected resolution choice
+            await encodeVideo(signedUrl, outputName, resolution);
+        } catch (error) {
+            console.error(error);
+            // Handle the error as needed
         }
         
-        console.log("Resolution: ",resolution);
-        if (resolution != "None") {
-            const outputName = "new" + "_" + runCount + "_" + video?.originalname;
-            const encode = await encodeVideo(video, resolution, outputName);
-            if (encode == "OK") {
-                await getThumbnail(video);
-                res.render("index", { displayMessage: "Success! Video was encoded.", title: "Video Resizer" });
-            }
-
-        } else {
-            res.render("index", { displayMessage: "Please select a resolution.", title: "Video Resizer" });
-        }
+        res.render("index", { fileName, displayMessage: "Done.", title: 'Video Resizer' });
     } catch (error) {
-        let displayMessage = error;
-        res.render("index", { displayMessage, title: "Video Resizer" });
+        console.error(error);
     }
 });
