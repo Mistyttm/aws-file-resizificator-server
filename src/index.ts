@@ -4,9 +4,11 @@ const app = express();
 import path from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
+import ffmpegPath from 'ffmpeg-static';
+import Ffmpeg from 'fluent-ffmpeg';
 
 // middleware imports
-import { createS3bucket, uploadJsonToS3, getObjectFromS3 } from './middleware/aws';
+import { createS3bucket } from './middleware/aws';
 import { createSQSQueue } from './middleware/sqs'
 
 // Routes
@@ -23,15 +25,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan("combined"));
+Ffmpeg.setFfmpegPath(ffmpegPath ?? "");
 
+// Routing
 app.use('/api/v1', routes);
 
 /*Create s3 bucket and sqs queue (if not already created) 
 upload bucket data and retrieve the bucket object */
 (async () => {
     await createS3bucket();
-    await uploadJsonToS3();
-    await getObjectFromS3();
     await createSQSQueue();
 })();
 
