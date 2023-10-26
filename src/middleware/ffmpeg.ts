@@ -1,17 +1,22 @@
 import Ffmpeg from "fluent-ffmpeg";
+import ffmpegPath from "ffmpeg-static";
 import fs from 'fs';
-import path from "path";
 
-export async function encodeVideo(videoFile: any, resolution: string, outputName: string) {
+Ffmpeg.setFfmpegPath(ffmpegPath ?? "");
+
+export async function encodeVideo(s3Url: any, resolution: string, outputName: string) {
     try {
+        // Ensure resolution is in the correct format
+        const resolutionPattern = /^\d{2,4}x\d{2,4}$/;
+        if (!resolutionPattern.test(resolution)) {
+            return Promise.reject(new Error("Invalid resolution format. Use 'widthxheight', e.g., '1280x720'."));
+        }
         let status = '';
-        const absolutePath = path.resolve("src/videos/" + videoFile);
-        const filePath = fs.createReadStream(absolutePath);
         Ffmpeg()
-                .input(filePath)
+                .input(s3Url)
                 .videoCodec("libx264")
                 .size(resolution)
-                .output("src/videos/" + outputName)
+                .output(outputName + ".mp4") //todo: add filename from mimetype, might use regex to format from "video/mp4" to ".mp4"
                 .on("end", () => {
                     status = "OK";
                     console.log("Success - Video encoding complete.");
