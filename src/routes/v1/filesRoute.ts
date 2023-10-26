@@ -3,15 +3,11 @@ import * as AWS from 'aws-sdk';
 import upload from "../../middleware/multer";
 import { randomBytes } from "crypto";
 import { encodeVideo } from '../../middleware/ffmpeg';
-import { uploadToS3, createS3bucket } from "../../middleware/aws";
+import { uploadToS3 } from "../../middleware/aws";
 
 export const filesRouter = Router();
 const bucketName = process.env.BUCKET_NAME
 const s3Bucket = new AWS.S3();
-
-(async () => {
-    await createS3bucket();
-})();  
 
 /* Upload client video */
 filesRouter.post("/upload", upload.single("video"), async (req, res) => {
@@ -45,7 +41,7 @@ filesRouter.post("/upload", upload.single("video"), async (req, res) => {
                 );
             });
             // Encode the video from the signed URL to the client's selected resolution choice
-            await encodeVideo(signedUrl, outputName, resolution);
+            await encodeVideo(signedUrl, resolution, outputName);
         } catch (error) {
             console.error(error);
             // Handle the error as needed
