@@ -17,6 +17,7 @@ export async function getVideo(videoFile: any, filePath: string) {
 
 // Todo: Probably add uploads back to s3 directly in encoding function
 export function encodeVideo(s3Url: string, outputName: string, resolution: string) {
+    // TODO: download file from S3
     return new Promise((resolve, reject) => {
         Ffmpeg()
             .input(s3Url) 
