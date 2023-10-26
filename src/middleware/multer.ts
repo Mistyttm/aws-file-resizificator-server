@@ -1,7 +1,14 @@
 import multer from "multer";
 import path from "path";
 
-const storage = multer.memoryStorage();
+// @ts-ignore
+const storage = multer.memoryStorage({
+    // @ts-ignore
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
 
 /* Check file has valid video extension type */ 
 const isVideo = function (req: any, file: Express.Multer.File, cb: any) {
