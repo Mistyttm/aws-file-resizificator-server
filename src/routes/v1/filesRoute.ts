@@ -9,7 +9,7 @@ export const filesRouter = Router();
 /* Encode client's uploaded video to the specified resolution and upload result to s3 storage */
 filesRouter.post('/upload', upload.single('video'), async (req, res) => {
     if (!req.file) {
-        return res.status(500).send("Error - No file upload found.");
+        return res.status(500).json({status: "error", message: "Error - No file upload found."});
     }
     const fileName = randomBytes(64).toString("hex");
 
@@ -25,6 +25,6 @@ filesRouter.post('/upload', upload.single('video'), async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        return res.status(500).send("Error - Request could not be processed.");
+        return res.status(500).json({status: "error", message: "Error - Request could not be processed."});
     }
 });
