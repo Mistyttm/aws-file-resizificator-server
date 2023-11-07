@@ -9,8 +9,8 @@ import Ffmpeg from 'fluent-ffmpeg';
 import createHttpError from 'http-errors';
 
 // middleware imports
-import { createS3bucket } from './middleware/aws';
-import { createSQSQueue } from './middleware/sqs'
+import { createS3bucket } from './middleware/aws/s3Bucket';
+import { createSQSQueue } from './middleware/aws/sqs'
 
 // Routes
 import { routes } from './routes/v1';
