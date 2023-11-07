@@ -11,7 +11,10 @@ Ffmpeg.setFfmpegPath(ffmpegPath ?? "");
 export async function encodeVideo(filePath: string, outputName: string, resolution: string, fileType: string) {
     return new Promise((resolve, reject) => {
         console.log("encoding video...");
-        const outputFilePath = path.join('encoded', outputName);
+
+        const fileExtension = fileType.replace(/^.*\//, '.');
+        outputName =  outputName + fileExtension;
+        const outputFilePath = path.join('output/encoded', outputName);
     
         Ffmpeg(filePath)
             .videoCodec('libx264')
