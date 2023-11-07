@@ -10,7 +10,7 @@ import createHttpError from 'http-errors';
 
 // middleware imports
 import { createS3bucket } from './middleware/aws/s3Bucket';
-import { createSQSQueue } from './middleware/aws/sqs'
+import { initliseQueues } from './middleware/aws/sqs';
 
 // Routes
 import { routes } from './routes/v1';
@@ -51,7 +51,7 @@ app.use(function(err, req, res, next) {
 upload bucket data and retrieve the bucket object */
 (async () => {
     await createS3bucket();
-    await createSQSQueue();
+    await initliseQueues();
 })();
 
 app.listen(PORT, () => {
