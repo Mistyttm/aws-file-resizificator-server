@@ -41,7 +41,7 @@ filesRouter.post("/upload", upload.single("video"), async (req, res) => {
                 );
             });
             // Encode the video from the signed URL to the client's selected resolution choice
-            await encodeVideo(signedUrl, resolution, outputName);
+            await encodeVideo(signedUrl, outputName, resolution);
         } catch (error) {
             console.error(error);
             // Handle the error as needed

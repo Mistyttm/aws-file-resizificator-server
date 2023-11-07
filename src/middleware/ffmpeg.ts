@@ -4,33 +4,26 @@ import fs from 'fs';
 
 Ffmpeg.setFfmpegPath(ffmpegPath ?? "");
 
-export async function encodeVideo(s3Url: any, resolution: string, outputName: string) {
-    try {
-        // Ensure resolution is in the correct format
-        const resolutionPattern = /^\d{2,4}x\d{2,4}$/;
-        if (!resolutionPattern.test(resolution)) {
-            return Promise.reject(new Error("Invalid resolution format. Use 'widthxheight', e.g., '1280x720'."));
-        }
-        let status = '';
+/*Todo: Probably add uploads back to s3 directly in encoding function */
+export function encodeVideo(s3Url: string, outputName: string, resolution: string) {
+    console.log(s3Url);
+    return new Promise((resolve, reject) => {
         Ffmpeg()
-                .input(s3Url)
-                .videoCodec("libx264")
-                .size(resolution)
-                .output(outputName + ".mp4") //todo: add filename from mimetype, might use regex to format from "video/mp4" to ".mp4"
-                .on("end", () => {
-                    status = "OK";
-                    console.log("Success - Video encoding complete.");
-                })
-                .on("error", (error) => {
-                    status = "ERROR";
-                    console.log(error);
-                })
-                .run();
-        return status;
-
-    } catch (error) {
-        console.error("Error encoding video ", error);
-    }
+            .input(s3Url) 
+            .videoCodec("libx264")
+            .size(resolution)
+            .output(outputName + ".mp4") //todo: add filename from mimetype, might use regex to format from "video/mp4" to ".mp4"
+            .on("end", (video) => {
+                // todo: add s3 upload here
+                console.log("Video encoding complete");
+                resolve(video);
+            })
+            .on("error", (error) => {
+                console.error("Error encoding video: ", error);
+                reject(error);
+            })
+            .run();
+    });
 }
 
 export async function getThumbnail(videoFile: any) {
