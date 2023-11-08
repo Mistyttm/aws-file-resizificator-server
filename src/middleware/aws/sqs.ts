@@ -96,7 +96,7 @@ export async function sendMessage(task: any, queueUrl: string) {
 
     try {
         const message = await sqs.sendMessage(params).promise();
-        console.log("Message Sent: ", message.MessageId);
+        return {status: "OK", message: message.MessageId};
     } catch (error) {
         console.error("Error sending message: ", error);
     }

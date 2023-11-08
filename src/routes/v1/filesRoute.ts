@@ -21,7 +21,9 @@ filesRouter.post('/upload', upload.single('video'), async (req, res) => {
             fileType: req.file.mimetype
         }
         const queueUrl = await getQueueUrl(sourceQueueName) ?? "";
-        await sendMessage(taskParams, queueUrl);
+        const message = await sendMessage(taskParams, queueUrl);
+
+        res.json(message);
 
     } catch (error) {
         console.error(error);
