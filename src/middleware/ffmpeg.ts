@@ -5,13 +5,13 @@ import path from 'path';
 import { uploadToS3, getSignedUrl } from "./aws/s3Bucket";
 
 const bucketName = process.env.BUCKET_NAME;
-
 Ffmpeg.setFfmpegPath(ffmpegPath ?? "");
 
+/* Encode client's uploaded video to the selected resolution */
 export async function encodeVideo(filePath: string, outputName: string, resolution: string, fileType: string) {
     return new Promise((resolve, reject) => {
-        console.log("encoding video...");
-
+        console.log("Encoding video...");
+        // Regex code generated from AI prompt to change filetype string format from 'video/mp4' to '.mp4'
         const fileExtension = fileType.replace(/^.*\//, '.');
         outputName =  outputName + fileExtension;
         const outputFilePath = path.join('output/encoded', outputName);
@@ -23,7 +23,7 @@ export async function encodeVideo(filePath: string, outputName: string, resoluti
             .on('end', async () => {
             console.log('Video encoding complete.');
     
-            // Upload the encoded video to S3
+            // Get file path for encoded video output from disk storage
             const fileStream = fs.createReadStream(outputFilePath);
             const uploadParams = {
                 Bucket: bucketName,
@@ -33,21 +33,25 @@ export async function encodeVideo(filePath: string, outputName: string, resoluti
             };
             try {
                 await uploadToS3(uploadParams);
-                // Get signed s3 url
+                // Specify object file information for identifying the encoded video stored in s3
                 const signedUrlParams = {
-                Bucket: bucketName,
-                Key: path.basename(outputFilePath),
-                Expires: 60 * 20 // url valid for 20 minutes
+                    Bucket: bucketName,
+                    Key: path.basename(outputFilePath),
+                    Expires: 60 * 20 // signed url valid for 20 minutes
                 };
 
-                // Upload encoded video to s3 url
-                const url = await getSignedUrl(signedUrlParams);
-                console.log("Signed URL: ", url);
+                // Create signed url for accessing encoded video from s3
+                const signedUrl = await getSignedUrl(signedUrlParams);
+                console.log("Signed URL: ", signedUrl);
     
-                // Delete file from disk storage
-                fs.unlinkSync(outputFilePath);
-                resolve(url);
-
+                // Delete files from disk storage
+                if (signedUrl) {
+                    fs.unlinkSync(filePath);
+                    fs.unlinkSync(outputFilePath);
+                    resolve(signedUrl);
+                } else {
+                    console.error('Could not get signed url: ', Error);
+                }
             } catch (error) {
                 console.error('Error uploading to S3: ', error);
                 reject(error);
