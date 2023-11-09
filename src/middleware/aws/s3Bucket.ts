@@ -1,6 +1,10 @@
 import * as AWS from 'aws-sdk';
 
-// Code sourced from week 7 s3 demonstration 
+/* Code adapted from CAB432 week 7 s3 demonstration and AWS s3 Documentation: 
+    https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#getSignedUrl-property
+    https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putBucketLifecycle-property
+     */
+
 AWS.config.update({
     accessKeyId: process.env.aws_access_key_id,
     secretAccessKey: process.env.aws_secret_access_key,
@@ -8,11 +12,11 @@ AWS.config.update({
     region: "ap-southeast-2",
 });
 
-// Create an S3 client
+// Create S3 client
 const s3 = new AWS.S3();
-
 const bucketName = process.env.BUCKET_NAME ?? "cab432-team1-bucket";
 
+/* Create s3 bucket */
 export async function createS3bucket() {
     try {
         await s3.createBucket({ Bucket: bucketName }).promise();
@@ -26,27 +30,28 @@ export async function createS3bucket() {
     }
 }
 
-/* Set bucket policy to remove files uploaded 1 day ago */
+/* Set bucket policy to remove files after expiration time */
 export async function setS3LifecyclePolicy() {
     const policyParams = {
       Bucket: bucketName, 
       LifecycleConfiguration: {
        Rules: [ {
-        Expiration: { Days: 1 }, // Delete files after 1 day
+        Expiration: { Days: 1 }, // Set expiration time to delete files after 1 day
          Filter: { Prefix: '' }, // Apply policy to all bucket files
          ID: 'RemoveUploads', 
          Status: 'Enabled', 
         }]}
      };
+
     try {
       await s3.putBucketLifecycleConfiguration(policyParams).promise();
-      console.log('Lifecycle policy has been set - uploads will be removed from bucket after 1 day.');
+      console.log('Lifecycle policy has been set.');
     } catch (error) {
       console.error('Error setting bucket lifecycle policy: ', error); 
     }
   }
 
-// Upload data to S3
+/* Upload file to s3 */
 export async function uploadToS3(params: any) {
     try {
         await s3.upload(params).promise();
@@ -56,7 +61,8 @@ export async function uploadToS3(params: any) {
     }
 }
 
-/* Remove file from s3 storage */
+/* Remove file from s3 */
+//Todo: delete this function before submission if unused 
 export async function deleteFromS3(fileName: string) {
     const params = { Bucket: bucketName, Key: fileName };
 
@@ -69,6 +75,7 @@ export async function deleteFromS3(fileName: string) {
 }
 
 /* Search s3 for a file by filename */
+//Todo: delete this function before submission if unused 
 export async function searchS3(fileName: string) {
     const params = { Bucket: bucketName, Key: fileName, };
 
