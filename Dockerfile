@@ -10,5 +10,13 @@ WORKDIR /server
 
 COPY package.json package.json
 COPY LICENSE LICENSE
-COPY src src
-COPY ouput output
+COPY dist/* server.js
+COPY bunfig.toml bunfig.toml
+
+RUN mkdir ouput/encoded
+RUN mkdir ouput/uploads
+RUN bun install
+
+EXPOSE 8080
+
+CMD bun start
