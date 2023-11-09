@@ -1,5 +1,7 @@
 import * as AWS from 'aws-sdk';
+import path from 'path';
 import { encodeVideo } from '../ffmpeg';
+import { removeFiles } from '../validator';
 
 /* Code adapted from AWS SQS documenation:
     https://docs.aws.amazon.com/code-library/latest/ug/sqs_example_sqs_CreateQueue_section.html
@@ -73,9 +75,9 @@ export async function setRedrivePolicy(sourceQueueUrl: string, deadLetterQueueAr
         
     try {
         const setPolicy = await sqs.setQueueAttributes(policyParams).promise();
-        console.log("Redrive policy set successfully:", setPolicy);
+        console.log('Redrive policy set successfully: ', setPolicy);
     } catch (error) {
-        console.error("Error setting redrive policy: ", error);
+        console.error('Error setting redrive policy: ', error);
     }
 }
 
@@ -103,48 +105,75 @@ export async function sendMessage(task: any, queueUrl: string) {
     }
 }
 
-export async function processTasks(message: any) {
-    console.log("Running task from message:", message.MessageId);
-    // Retrieve the task parameteres from message in task queue
-    const task = JSON.parse(message.Body);
-    try {
-        // Encode the video from the task passed in the message queue
-        await encodeVideo(task.filePath, task.outputName, task.resolution, task.fileType);
-        // Return confirmation reciept that the task has been handled
-        return message.ReceiptHandle;
-    } catch (error) {
-        console.error('Error processing message: ', error);
-        return null;
-        // todo: retry sending message 
-        // get message.ID
-    }
-}
-
-/* Receive tasks from SQS message and process tasks */
-export async function receiveMessage(queueUrl: any) {
-    const params = { AttributeNames: ['SentTimestamp'],  MaxNumberOfMessages: 10,  MessageAttributeNames: ['All'],
-                        QueueUrl: queueUrl, WaitTimeSeconds: 20, VisibilityTimeout: 30 };
+async function receiveMessage(queueUrl: string) {
+    const messageParams = { 
+        QueueUrl: queueUrl,
+        AttributeNames: ['ApproximateReceiveCount', 'SentTimestamp'],
+        MaxNumberOfMessages: 10,
+        MessageAttributeNames: ['All'],
+        WaitTimeSeconds: 20,
+        VisibilityTimeout: 30 
+    };
 
     try {
-        const tasks = await sqs.receiveMessage(params).promise();
+        const tasks = await sqs.receiveMessage(messageParams).promise();
 
-        if (tasks.Messages) {
+        if (tasks.Messages) { // Check messages exist for attempting processing
             for (const task of tasks.Messages) {
                 try {
-                    const processTaskQueue = await processTasks(task);
-
-                    // Delete message from SQS queue after processing task
-                    const deleteParams = { QueueUrl: queueUrl, ReceiptHandle: processTaskQueue };
-                    await sqs.deleteMessage(deleteParams).promise();
-                    console.log('Deleted task from queue.');
-                
+                    await processMessage(task, queueUrl);
                 } catch (error) {
                     console.error('Error processing tasks from message: ', error);
                 }
             }
         }
     } catch (error) {
-        console.error("Error processing tasks: ", error);
+        console.error('Error receiving messages: ', error);
+    }
+}
+
+async function processMessage(task: any, queueUrl: string) {
+    console.log('Running task from message: ', task.MessageId);
+    console.log('Times this message has been received: ', task.Attributes.ApproximateReceiveCount);
+
+    const policyParams = { QueueUrl: queueUrl, AttributeNames: ['RedrivePolicy'] };
+    const getPolicy = await sqs.getQueueAttributes(policyParams).promise(); 
+
+    if (getPolicy.Attributes) {
+        const redrivePolicy = JSON.parse(getPolicy.Attributes.RedrivePolicy);
+
+        if (task.Attributes.ApproximateReceiveCount >= redrivePolicy.maxReceiveCount) {
+            console.log(`Message ID ${task.MessageId} has reached maximum processing attempts and has been moved to the Dead Letter Queue.`);
+            return;
+        }
+    } else {
+        console.error('No redrive policy found ', Error);
+    }
+    const runTask = await processEncodingTasks(task);
+
+    if (runTask) {
+        // Delete video files from disk storage and message from SQS queue after processing task
+        await removeFiles(runTask.inputPath);
+        await removeFiles(runTask.outputPath);
+
+        const deleteParams = { QueueUrl: queueUrl, ReceiptHandle: runTask.receiptHandle };
+        await sqs.deleteMessage(deleteParams).promise();
+        console.log('Deleted task from queue.');
+    }
+}
+
+/* Process tasks for video encoding from queue message */
+async function processEncodingTasks(message: any) {
+    try {
+        const task = JSON.parse(message.Body);
+        await encodeVideo(task.filePath, task.outputName, task.resolution, task.fileType);
+        const outputFilePath = path.join('output/encoded', task.outputName);
+        
+        // Return message receipt handle and file paths to remove videos after processing 
+        return { receiptHandle: message.ReceiptHandle, inputPath: task.filePath, outputPath: outputFilePath };
+    
+    } catch (error) {
+        console.error('Error processing message: ', error);
     }
 }
 

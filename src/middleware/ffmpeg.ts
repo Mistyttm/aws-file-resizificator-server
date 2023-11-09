@@ -47,7 +47,7 @@ export async function encodeVideo(filePath: string, outputName: string, resoluti
                 // Delete files from disk storage
                 if (signedUrl) {
                     //TODO: Move this function from here to run after deleteing sqs message
-                    await removeFiles(filePath, outputFilePath);
+                    //await removeFiles(filePath, outputFilePath);
                     resolve(signedUrl);
                 } else {
                     console.error('Could not get signed url: ', Error);
@@ -65,25 +65,6 @@ export async function encodeVideo(filePath: string, outputName: string, resoluti
             .run();
         });
     }
-
-    async function removeFiles(originalVideoPath: string, encodedVideoPath: string) {
-        try {
-          if (fs.existsSync(originalVideoPath)) {
-            fs.unlinkSync(originalVideoPath);
-          } else {
-            console.error('Error - File path for original video upload not found.');
-          }
-      
-          if (fs.existsSync(encodedVideoPath)) {
-            fs.unlinkSync(encodedVideoPath);
-          } else {
-            console.error('Error - File path for encoded video not found.');
-          }
-      
-        } catch (error) {
-          console.error(error);
-        }
-      }
 
 export async function getThumbnail(videoFile: any) {
     try {

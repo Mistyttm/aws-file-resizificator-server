@@ -11,6 +11,11 @@ filesRouter.post('/upload', upload.single('video'), async (req, res) => {
     if (!req.file) {
         return res.status(500).json({status: "error", message: "Error - No file upload found."});
     }
+    
+    if (!req.body.resolution) {
+       return res.status(500).json({status: "error", message: "Error - Please select a resolution."});
+    }
+    
     const fileName = randomBytes(64).toString("hex");
 
     try {
