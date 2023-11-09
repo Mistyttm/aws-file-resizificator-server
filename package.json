@@ -33,8 +33,6 @@
     "@types/express": "^4.17.19",
     "@types/ffmpeg-static": "^3.0.2",
     "@types/fluent-ffmpeg": "^2.1.22",
-    "@types/handlebars": "^4.1.0",
-    "@types/hbs": "^4.0.3",
     "@types/morgan": "^1.9.6",
     "@types/multer": "^1.4.9",
     "@types/uuid": "^9.0.5",
@@ -46,6 +44,6 @@
   "scripts": {
     "dev": "bun --hot run src/index.ts",
     "compile": "timestamp=$(date +%s) && bun x rimraf ./dist && bun build --target=bun src/index.ts --outfile=dist/build_$timestamp.js",
-    "start": "bun compile && bun build/server/index.js"
+    "start": "bun server.js"
   }
 }
