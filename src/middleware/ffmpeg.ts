@@ -46,6 +46,7 @@ export async function encodeVideo(filePath: string, outputName: string, resoluti
                 
                 // Delete files from disk storage
                 if (signedUrl) {
+                    //TODO: Move this function from here to run after deleteing sqs message
                     await removeFiles(filePath, outputFilePath);
                     resolve(signedUrl);
                 } else {

@@ -129,7 +129,6 @@ export async function receiveMessage(queueUrl: any) {
         const tasks = await sqs.receiveMessage(params).promise();
 
         if (tasks.Messages) {
-            console.log('Recieved tasks!');
             for (const task of tasks.Messages) {
                 try {
                     const processTaskQueue = await processTasks(task);
