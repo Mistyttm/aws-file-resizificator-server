@@ -121,7 +121,7 @@ export async function processTasks(message: any) {
 }
 
 /* Receive tasks from SQS message and process tasks */
-export async function recieveMessage(queueUrl: any) {
+export async function receiveMessage(queueUrl: any) {
     const params = { AttributeNames: ['SentTimestamp'],  MaxNumberOfMessages: 10,  MessageAttributeNames: ['All'],
                         QueueUrl: queueUrl, WaitTimeSeconds: 20, VisibilityTimeout: 30 };
 
@@ -153,7 +153,7 @@ export async function recieveMessage(queueUrl: any) {
 export async function sqsWorker(queueUrl: string) {
     while (true) { // Run indefinitely
         try {
-            await recieveMessage(queueUrl);
+            await receiveMessage(queueUrl);
         } catch (error) {
             console.error('Error processing message: ', error);
         }
