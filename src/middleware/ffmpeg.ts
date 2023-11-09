@@ -2,7 +2,7 @@ import Ffmpeg from "fluent-ffmpeg";
 import ffmpegPath from "ffmpeg-static";
 import fs from 'fs';
 import path from 'path';
-import { uploadToS3, getSignedUrl } from "./aws/s3Bucket";
+import { uploadToS3, getSignedUrl } from "@middleware/aws/s3Bucket";
 
 const bucketName = process.env.BUCKET_NAME;
 Ffmpeg.setFfmpegPath(ffmpegPath ?? "");

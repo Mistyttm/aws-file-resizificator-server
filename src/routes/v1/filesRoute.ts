@@ -1,7 +1,7 @@
 import { Router } from "express";
-import upload from "../../middleware/multer";
+import upload from "@middleware/multer";
 import { randomBytes } from "crypto";
-import { getQueueUrl, sourceQueueName, sendMessage } from "../../middleware/aws/sqs";
+import { getQueueUrl, sourceQueueName, sendMessage } from "@middleware/aws/sqs";
 
 export const filesRouter = Router();
 
