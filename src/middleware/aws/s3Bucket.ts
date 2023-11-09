@@ -55,9 +55,9 @@ export async function setS3LifecyclePolicy() {
 export async function uploadToS3(params: any) {
     try {
         await s3.upload(params).promise();
-        console.log("File uploaded successfully.");
+        console.log('File uploaded successfully.');
     } catch (error: any) {
-        console.error("Error uploading file: ", error);
+        console.error('Error uploading file: ', error);
     }
 }
 
@@ -68,7 +68,7 @@ export async function deleteFromS3(fileName: string) {
 
     try {
         await s3.deleteObject(params).promise();
-        console.log("File deleted successfully.");
+        console.log('File deleted successfully.');
     } catch (error) {
         console.error("Error deleting file: ", error);
     } 
@@ -96,7 +96,7 @@ export async function searchS3(fileName: string) {
 /* Get a signed url for the address of the video uploaded to s3 */
 export async function getSignedUrl(params: any) {
     try {
-        const url = await s3.getSignedUrlPromise("getObject", params);
+        const url = await s3.getSignedUrlPromise('getObject', params);
         console.log(url);
         return url;
     } catch (error: any) {
