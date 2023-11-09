@@ -20,12 +20,12 @@ const bucketName = process.env.BUCKET_NAME ?? "cab432-team1-bucket";
 export async function createS3bucket() {
     try {
         await s3.createBucket({ Bucket: bucketName }).promise();
-        console.log(`Created bucket: ${bucketName}`);
+        console.log('Created bucket: ', bucketName);
     } catch (error: any) {
         if (error.statusCode === 409) {
-            console.log(`Bucket already exists: ${bucketName}`);
+            console.log('Bucket already exists: ', bucketName);
         } else {
-            console.log(`Error creating bucket: ${error}`);
+            console.log('Error creating bucket: ', error);
         }
     }
 }
@@ -46,7 +46,7 @@ export async function setS3LifecyclePolicy() {
     try {
       await s3.putBucketLifecycleConfiguration(policyParams).promise();
       console.log('Lifecycle policy has been set.');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error setting bucket lifecycle policy: ', error); 
     }
   }
@@ -56,7 +56,7 @@ export async function uploadToS3(params: any) {
     try {
         await s3.upload(params).promise();
         console.log("File uploaded successfully.");
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error uploading file: ", error);
     }
 }
@@ -83,8 +83,8 @@ export async function searchS3(fileName: string) {
         await s3.headObject(params).promise();
         return true;
     } catch (error: any) {
-        if (error.code === "NotFound") {
-            console.log("File was not found in the s3 bucket.");
+        if (error.code === 'NotFound') {
+            console.log('File was not found in the s3 bucket.');
             return false;
         } else {
             console.error(error);
@@ -99,7 +99,7 @@ export async function getSignedUrl(params: any) {
         const url = await s3.getSignedUrlPromise("getObject", params);
         console.log(url);
         return url;
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
     }
 }
