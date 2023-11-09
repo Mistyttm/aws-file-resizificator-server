@@ -43,15 +43,15 @@ export async function encodeVideo(filePath: string, outputName: string, resoluti
                 // Create signed url for accessing encoded video from s3
                 const signedUrl = await getSignedUrl(signedUrlParams);
                 console.log("Signed URL: ", signedUrl);
-    
+                
                 // Delete files from disk storage
                 if (signedUrl) {
-                    fs.unlinkSync(filePath);
-                    fs.unlinkSync(outputFilePath);
+                    await removeFiles(filePath, outputFilePath);
                     resolve(signedUrl);
                 } else {
                     console.error('Could not get signed url: ', Error);
                 }
+
             } catch (error) {
                 console.error('Error uploading to S3: ', error);
                 reject(error);
@@ -64,6 +64,25 @@ export async function encodeVideo(filePath: string, outputName: string, resoluti
             .run();
         });
     }
+
+    async function removeFiles(originalVideoPath: string, encodedVideoPath: string) {
+        try {
+          if (fs.existsSync(originalVideoPath)) {
+            fs.unlinkSync(originalVideoPath);
+          } else {
+            console.error('Error - File path for original video upload not found.');
+          }
+      
+          if (fs.existsSync(encodedVideoPath)) {
+            fs.unlinkSync(encodedVideoPath);
+          } else {
+            console.error('Error - File path for encoded video not found.');
+          }
+      
+        } catch (error) {
+          console.error(error);
+        }
+      }
 
 export async function getThumbnail(videoFile: any) {
     try {
