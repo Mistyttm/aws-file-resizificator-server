@@ -9,7 +9,7 @@ import Ffmpeg from 'fluent-ffmpeg';
 import createHttpError from 'http-errors';
 
 // middleware imports
-import { createS3bucket } from './middleware/aws/s3Bucket';
+import { createS3bucket, setS3LifecyclePolicy } from './middleware/aws/s3Bucket';
 import { initliseQueues } from './middleware/aws/sqs';
 
 // Routes
@@ -51,6 +51,7 @@ app.use('/api/v1', routes);
 upload bucket data and retrieve the bucket object */
 (async () => {
     await createS3bucket();
+    await setS3LifecyclePolicy();
     await initliseQueues();
 })();
 

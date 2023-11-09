@@ -26,6 +26,26 @@ export async function createS3bucket() {
     }
 }
 
+/* Set bucket policy to remove files uploaded 1 day ago */
+export async function setS3LifecyclePolicy() {
+    const policyParams = {
+      Bucket: bucketName, 
+      LifecycleConfiguration: {
+       Rules: [ {
+        Expiration: { Days: 1 }, // Delete files after 1 day
+         Filter: { Prefix: '' }, // Apply policy to all bucket files
+         ID: 'RemoveUploads', 
+         Status: 'Enabled', 
+        }]}
+     };
+    try {
+      await s3.putBucketLifecycleConfiguration(policyParams).promise();
+      console.log('Lifecycle policy has been set - uploads will be removed from bucket after 1 day.');
+    } catch (error) {
+      console.error('Error setting bucket lifecycle policy: ', error); 
+    }
+  }
+
 // Upload data to S3
 export async function uploadToS3(params: any) {
     try {
