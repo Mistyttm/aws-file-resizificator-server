@@ -1,7 +1,7 @@
 import * as AWS from 'aws-sdk';
 import path from 'path';
-import { encodeVideo } from '../ffmpeg';
-import { removeFiles } from '../validator';
+import { encodeVideo } from '@middleware/ffmpeg';
+import { removeFiles } from '@middleware/validator';
 
 /* Code adapted from AWS SQS documenation:
     https://docs.aws.amazon.com/code-library/latest/ug/sqs_example_sqs_CreateQueue_section.html

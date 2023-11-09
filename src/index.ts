@@ -6,7 +6,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import ffmpegPath from 'ffmpeg-static';
 import Ffmpeg from 'fluent-ffmpeg';
-import createHttpError from 'http-errors';
 
 // middleware imports
 import { createS3bucket, setS3LifecyclePolicy } from './middleware/aws/s3Bucket';

@@ -12,6 +12,11 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@middleware/*": ["middleware/*"],
+      "@routes/v1/*": ["routes/v1/*"]
+    }
   }
 }
