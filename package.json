@@ -43,7 +43,7 @@
   },
   "scripts": {
     "dev": "bun --hot run src/index.ts",
-    "compile": "timestamp=$(date +%s) && bun x rimraf ./dist && bun build --target=bun src/index.ts --outfile=dist/build_$timestamp.js",
-    "start": "bun server.js"
+    "compile": "timestamp=$(date +%s) && bun x rimraf ./dist && bun build --target=node src/index.ts --outfile=dist/build_$timestamp.js",
+    "start": "node server.js"
   }
 }
