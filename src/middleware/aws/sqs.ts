@@ -75,7 +75,7 @@ export async function setRedrivePolicy(sourceQueueUrl: string, deadLetterQueueAr
         
     try {
         const setPolicy = await sqs.setQueueAttributes(policyParams).promise();
-        console.log('Redrive policy set successfully: ', setPolicy);
+        console.log('Redrive policy set successfully');
     } catch (error) {
         console.error('Error setting redrive policy: ', error);
     }
