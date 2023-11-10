@@ -1,3 +1,5 @@
+process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1";
+
 // Imports
 import express from 'express';
 const app = express();
@@ -8,15 +10,13 @@ import ffmpegPath from 'ffmpeg-static';
 import Ffmpeg from 'fluent-ffmpeg';
 
 // middleware imports
-import { createS3bucket, setS3LifecyclePolicy } from './middleware/aws/s3Bucket';
-import { initliseQueues } from './middleware/aws/sqs';
+import { createS3bucket, setS3LifecyclePolicy } from '@middleware/aws/s3Bucket';
+import { initliseQueues } from '@middleware/aws/sqs';
 
 // Routes
 import { routes } from './routes/v1';
 
 const PORT = process.env.PORT ?? 8080;
-
-process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1";
 
 // Middleware
 app.use(express.static(path.join(__dirname, "..", "..", "build", "app")));
