@@ -1,8 +1,8 @@
-FROM oven/bun
+FROM node:21-alpine
 LABEL authors="Emmey Leo & Belle [lastname]"
 LABEL maintainers="github.com/Mistyttm & github.com/toasterCats"
 
-ENV BUN_ENV=production
+ENV NODE_ENV=production
 ENV PORT=8080
 ENV BUCKET_NAME=cab432-team1-bucket
 
@@ -11,12 +11,11 @@ WORKDIR /server
 COPY package.json package.json
 COPY LICENSE LICENSE
 COPY dist/* server.js
-COPY bunfig.toml bunfig.toml
+COPY output/encoded /server/output/encoded
+COPY output/uploads /server/output/uploads
 
-RUN mkdir ouput/encoded
-RUN mkdir ouput/uploads
-RUN bun install
+RUN npm i
 
 EXPOSE 8080
 
-CMD bun start
+CMD npm run start
