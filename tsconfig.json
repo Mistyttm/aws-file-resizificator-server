@@ -18,5 +18,8 @@
       "@middleware/*": ["middleware/*"],
       "@routes/v1/*": ["routes/v1/*"]
     }
-  }
+  },
+  "exclude": [
+    "dist"
+  ]
 }
