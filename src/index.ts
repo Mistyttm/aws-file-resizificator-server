@@ -6,8 +6,6 @@ const app = express();
 import path from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
-import ffmpegPath from 'ffmpeg-static';
-import Ffmpeg from 'fluent-ffmpeg';
 
 // middleware imports
 import { createS3bucket, setS3LifecyclePolicy } from '@middleware/aws/s3Bucket';
@@ -25,7 +23,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan("combined"));
-Ffmpeg.setFfmpegPath(ffmpegPath ?? "");
 
 // Routing
 app.use('/api/v1', routes);
