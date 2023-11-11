@@ -5,7 +5,7 @@ import path from 'path';
 import { uploadToS3, getSignedUrl } from "@middleware/aws/s3Bucket";
 
 const bucketName = process.env.BUCKET_NAME;
-Ffmpeg.setFfmpegPath(ffmpegPath ?? "");
+Ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");
 
 /* Encode client's uploaded video to the selected resolution */
 export async function encodeVideo(filePath: string, outputName: string, resolution: string, fileType: string) {
