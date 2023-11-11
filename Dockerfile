@@ -1,4 +1,4 @@
-FROM node:21
+FROM node:lts
 LABEL authors="Emmey Leo & Belle [lastname]"
 LABEL maintainers="github.com/Mistyttm & github.com/toasterCats"
 
@@ -8,15 +8,16 @@ ENV BUCKET_NAME=cab432-team1-bucket
 
 WORKDIR /server
 
+RUN apt-get -y update && apt-get install -y ffmpeg
+
 COPY package.json package.json
 COPY LICENSE LICENSE
 COPY dist/* server.js
-COPY output/encoded /server/output/encoded
-COPY output/uploads /server/output/uploads
+COPY output/encoded output/encoded
+COPY output/uploads output/uploads
 
-RUN apt-get -y update && apt-get -y upgrade && apt-get install -y ffmpeg
-RUN npm i
+RUN npm i --omit=dev
 
-EXPOSE 8080
+EXPOSE ${PORT}
 
-CMD npm run start
+CMD npm start
