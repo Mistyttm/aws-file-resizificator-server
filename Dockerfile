@@ -1,4 +1,4 @@
-FROM node:21-alpine
+FROM node:21
 LABEL authors="Emmey Leo & Belle [lastname]"
 LABEL maintainers="github.com/Mistyttm & github.com/toasterCats"
 
@@ -14,6 +14,7 @@ COPY dist/* server.js
 COPY output/encoded /server/output/encoded
 COPY output/uploads /server/output/uploads
 
+RUN apt-get -y update && apt-get -y upgrade && apt-get install -y ffmpeg
 RUN npm i
 
 EXPOSE 8080
