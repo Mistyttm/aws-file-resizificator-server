@@ -187,6 +187,8 @@ async function processEncodingTasks(message: any) {
         };
         await uploadToS3(uploadParams);
 
+        console.log(s3Key);
+
         // Generate signed S3 URL for encoded video
         const signedUrlParams = {
             Bucket: bucketName,

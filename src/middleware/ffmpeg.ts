@@ -1,6 +1,4 @@
 import Ffmpeg from "fluent-ffmpeg";
-import ffmpegPath from "ffmpeg-static";
-import fs from 'fs';
 import path from 'path';
 
 Ffmpeg.setFfmpegPath("/usr/bin/ffmpeg");

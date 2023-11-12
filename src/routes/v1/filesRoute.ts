@@ -14,7 +14,7 @@ filesRouter.post('/upload', upload.single('video'), async (req, res) => {
     }
     
     if (!req.body.resolution) {
-       return res.status(500).json({status: "error", message: "Error - Please select a resolution."});
+        return res.status(500).json({status: "error", message: "Error - Please select a resolution."});
     }
 
     // Create a random file name
@@ -30,9 +30,11 @@ filesRouter.post('/upload', upload.single('video'), async (req, res) => {
 
         // Get the name of SQS queue and send encoding task as message to queue
         const queueUrl = await getQueueUrl(sourceQueueName) ?? "";
-        const message = await sendMessage(taskParams, queueUrl);
+        await sendMessage(taskParams, queueUrl);
 
-        res.json(message);
+        const fileExtension = taskParams.fileType.replace(/^.*\//, '.');
+
+        res.json({status: "OK", message: taskParams.outputName + fileExtension});
 
     } catch (error) {
         console.error(error);
@@ -44,14 +46,19 @@ filesRouter.post('/upload', upload.single('video'), async (req, res) => {
 filesRouter.get('/encodedVideo/:outputName', async (req, res) => {
     const { outputName } = req.params;
 
-   // Check the encoded video output name is avalible 
-  // @ts-ignore
-    if (encodedVideoUrl[outputName]) {
-        const signedUrlParams = { Bucket: bucketName,
-            // @ts-ignore
-            Key: encodedVideoUrl[outputName], Expires: 60 * 20 // Valid for 20 minutes
+    const outputNameNoExten = outputName.replace(/\.[^/.]+$/, "");
+
+    // Check the encoded video output name is avalible 
+    // @ts-ignore
+    if (encodedVideoUrl[outputNameNoExten]) {
+        const signedUrlParams = { 
+            Bucket: bucketName,
+            Key: outputName, 
+            Expires: 60 * 20 // Valid for 20 minutes
         };
-  
+
+        console.log(outputName);
+
         try {
             const signedUrl = await getSignedUrl(signedUrlParams);
             res.json({ status: 'OK', signedUrl: signedUrl });
@@ -63,4 +70,4 @@ filesRouter.get('/encodedVideo/:outputName', async (req, res) => {
     } else {
         res.status(404).json({ status: 'error', message: 'Please wait - your video is still being processed.' });
     }
-  });
+});
