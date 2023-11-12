@@ -1,4 +1,8 @@
 import fs from 'fs';
+//todo: rename this file something better
+
+// Store encoded videos to request from filesRoute
+export const encodedVideoUrl = {};
 
 export async function removeFiles(filePath: string) {
     try {
