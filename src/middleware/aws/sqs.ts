@@ -1,7 +1,9 @@
 import * as AWS from 'aws-sdk';
+import fs from 'fs';
 import path from 'path';
 import { encodeVideo } from '@middleware/ffmpeg';
-import { removeFiles } from '@middleware/validator';
+import { encodedVideoUrl, removeFiles } from '@middleware/validator';
+import { bucketName, uploadToS3, getSignedUrl} from 'middleware/aws/s3Bucket';
 
 /* Code adapted from AWS SQS documenation:
     https://docs.aws.amazon.com/code-library/latest/ug/sqs_example_sqs_CreateQueue_section.html
@@ -134,7 +136,7 @@ async function receiveMessage(queueUrl: string) {
 
 async function processMessage(task: any, queueUrl: string) {
     console.log('Running task from message: ', task.MessageId);
-    console.log('Times this message has been received: ', task.Attributes.ApproximateReceiveCount);
+    console.log('Number of times this message has been received: ', task.Attributes.ApproximateReceiveCount);
 
     const policyParams = { QueueUrl: queueUrl, AttributeNames: ['RedrivePolicy'] };
     const getPolicy = await sqs.getQueueAttributes(policyParams).promise(); 
@@ -152,6 +154,10 @@ async function processMessage(task: any, queueUrl: string) {
     const runTask = await processEncodingTasks(task);
 
     if (runTask) {
+        // Get the url associated with the output name from the message
+        // @ts-ignore
+        encodedVideoUrl[runTask.outputName] = runTask.signedUrl;
+
         // Delete video files from disk storage and message from SQS queue after processing task
         await removeFiles(runTask.inputPath);
         await removeFiles(runTask.outputPath);
@@ -166,14 +172,41 @@ async function processMessage(task: any, queueUrl: string) {
 async function processEncodingTasks(message: any) {
     try {
         const task = JSON.parse(message.Body);
-        await encodeVideo(task.filePath, task.outputName, task.resolution, task.fileType);
-        const outputFilePath = path.join('output/encoded', task.outputName);
-        
-        // Return message receipt handle and file paths to remove videos after processing 
-        return { receiptHandle: message.ReceiptHandle, inputPath: task.filePath, outputPath: outputFilePath };
-    
+        const encodedVideo = await encodeVideo(task.filePath, task.outputName, task.resolution, task.fileType);
+        // @ts-ignore
+        const outputFilePath = encodedVideo.outputFilePath;
+
+        // Upload the encoded video to S3
+        const fileStream = fs.createReadStream(outputFilePath);
+        const s3Key = path.basename(outputFilePath);
+        const uploadParams = {
+            Bucket: bucketName,
+            Key: s3Key,
+            Body: fileStream,
+            ContentType: task.fileType
+        };
+        await uploadToS3(uploadParams);
+
+        // Generate signed S3 URL for encoded video
+        const signedUrlParams = {
+            Bucket: bucketName,
+            Key: s3Key,
+            Expires: 60 * 20 // Url is valid for 20 minutes
+        };
+
+        const signedUrl = await getSignedUrl(signedUrlParams);
+
+        return {
+            receiptHandle: message.ReceiptHandle,
+            inputPath: task.filePath,
+            outputPath: outputFilePath,
+            signedUrl: signedUrl,
+            outputName: task.outputName 
+        };
+
     } catch (error) {
         console.error('Error processing message: ', error);
+        return null;
     }
 }
 

@@ -14,7 +14,7 @@ AWS.config.update({
 
 // Create S3 client
 const s3 = new AWS.S3();
-const bucketName = process.env.BUCKET_NAME ?? "cab432-team1-bucket";
+export const bucketName = process.env.BUCKET_NAME ?? "cab432-team1-bucket";
 
 /* Create s3 bucket */
 export async function createS3bucket() {
