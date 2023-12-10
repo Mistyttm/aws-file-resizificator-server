@@ -32,10 +32,11 @@ jobs:
           path: resources/front-end
       
       - run: bun i
+      - run: cd node-modules/fluent-ffmpeg && cp -r ./lib/* ./lib-cov/
       - run: bun compile
       - run: cd resources/front-end && bun i && bun run build
-      - run: cp -r ./dist/* ../dist/
-      - run: cd ..
+      - run: cp -r ./dist/* ../../dist/
+      - run: cd .. && cd ..
 
       # Zip the entire dist folder
       - name: Zip Dist Folder
