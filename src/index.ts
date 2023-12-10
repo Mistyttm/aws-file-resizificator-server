@@ -7,7 +7,7 @@ import path from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
 
-// middleware imports
+// Middleware imports
 import { createS3bucket, setS3LifecyclePolicy } from '@middleware/aws/s3Bucket';
 import { initliseQueues } from '@middleware/aws/sqs';
 
