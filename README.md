@@ -14,14 +14,14 @@ To install this on your AWS server, run an EC2 instance and install docker. then
 ## Building
 ### Linux & MacOS
 This application was built with the BunJS runtime in mind, but it can be easily swapped out for npm/node. To build and run the server locally follow these steps:
- 1. Clone this repo
- 2. Clone the [client repo](https://github.com/Mistyttm/aws-file-resizificator-client)
- 3. Inside the server repo run `bun i`
+ 1. Clone this repo.
+ 2. Clone the [client repo](https://github.com/Mistyttm/aws-file-resizificator-client).
+ 3. Inside the server repo run `bun i`.
     1. Inside the server repo run `bun compile`. A new dist folder should appear with the server compiled.
- 4. Inside the client repo, run `bun i`
-    1. Run `bun run build`
-    2. Copy the output files into `aws-file-resizificator-server/dist/front-end/`
- 5. Run `bun start`
+ 4. Inside the client repo, run `bun i`.
+    1. Run `bun run build`.
+    2. Copy the output files into `aws-file-resizificator-server/dist/front-end/`.
+ 5. Run `bun start`.
 
 ### Windows
 The Windows process requires access to a working WSL environment with bun installed. The steps are then the same as above.
